@@ -52,7 +52,7 @@ if( !isset($_SESSION["login"]) ) {
     <!-- navbar -->
     <div class="jumbotron jumbotron-fluid">
         <div class="container text-center">
-            <a href="index.php" class="brand-logo"><img src="" width="300"></a>
+            <a href="index.php" class="brand-logo"><img src="https://github.com/ElangGilangBuana/prakweb_b_183040043.git" width="300"></a>
         </div>
     </div>
 
