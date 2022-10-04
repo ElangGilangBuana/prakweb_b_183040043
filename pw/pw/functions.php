@@ -1,19 +1,21 @@
 <?php
 
 // koneksi ke database
-$conn = mysqli_connect("localhost", "root", "", "prakweb_2022_b_203040103");
+$conn = mysqli_connect("127.0.0.1", "root", "", "buku");
 
-function query($query) {
+function query($query)
+{
 	global $conn;
 	$result = mysqli_query($conn, $query);
 	$rows = [];
-	while( $row = mysqli_fetch_assoc($result) ) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		$rows[] = $row;
 	}
 	return $rows;
 }
 
-function tambah($data) {
+function tambah($data)
+{
 	global $conn;
 
 	$kode_buku = htmlspecialchars($data["kode_buku"]);
@@ -23,20 +25,20 @@ function tambah($data) {
 
 	// upload gambar
 	$gambar = upload();
-	if( !$gambar) {
+	if (!$gambar) {
 		return false;
 	}
 
 	$query = "INSERT INTO buku
 				VALUES
-				('', '$gambar',  '$kode_buku', '$judul_buku', '$penulis_buku', '$harga')
-			";
+		('', '$gambar',  '$kode_buku', '$judul_buku', '$penulis_buku', '$harga')";
 	mysqli_query($conn, $query);
 
 	return mysqli_affected_rows($conn);
 }
 
-function upload() {
+function upload()
+{
 
 	$namaFile = $_FILES['gambar']['name'];
 	$ukuranFile = $_FILES['gambar']['size'];
@@ -44,7 +46,7 @@ function upload() {
 	$tmpName = $_FILES['gambar']['tmp_name'];
 
 	// cek apakah tidak ada gambar yang di upload
-	if( $error === 4 ) {
+	if ($error === 4) {
 		echo "<script>
 				alert('pilih gambar terlebih dahulu');
 				</script>";
@@ -55,7 +57,7 @@ function upload() {
 	$ekstensiGambarValid = ['jpg', 'jpeg', 'png'];
 	$ekstensiGambar = explode('.', $namaFile);
 	$ekstensiGambar = strtolower(end($ekstensiGambar));
-	if( !in_array($ekstensiGambar, $ekstensiGambarValid) ) {
+	if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
 		echo "<script>
 				alert('yang anda upload bukan gambar');
 			</script>";
@@ -72,20 +74,21 @@ function upload() {
 	move_uploaded_file($tmpName, 'img/' . $namaFile);
 
 	return $namaFileBaru;
-
 }
 
 
 
 
-function hapus($id) {
+function hapus($id)
+{
 	global $conn;
 	mysqli_query($conn, "DELETE FROM buku WHERE id = $id");
 
 	return mysqli_affected_rows($conn);
 }
 
-function ubah($data) {
+function ubah($data)
+{
 	global $conn;
 
 	$id = $data["id"];
@@ -96,13 +99,12 @@ function ubah($data) {
 	$harga = htmlspecialchars($data["harga"]);
 
 	// cek apakah user pilih gambar baru atau tidak
-	if( $_FILES['gambar']['error'] === 4 ) {
+	if ($_FILES['gambar']['error'] === 4) {
 		$gambar = $gambarLama;
 	} else {
 		$gambar = upload();
-
 	}
-	
+
 	$query = "UPDATE buku SET
 				gambar = '$gambar',
 				kode_buku = '$kode_buku'
@@ -116,7 +118,8 @@ function ubah($data) {
 	return mysqli_affected_rows($conn);
 }
 
-function cari($keyword) {
+function cari($keyword)
+{
 	$query = "SELECT * FROM buku
 				WHERE
 			kode_buku LIKE '%$keyword%' OR
@@ -124,10 +127,11 @@ function cari($keyword) {
             penulis_buku LIKE '%$keyword%' OR
             harga LIKE '%$keyword%'
             ";
-    return query($query);
+	return query($query);
 }
 
-function registrasi($data) {
+function registrasi($data)
+{
 	global $conn;
 
 	$username = strtolower(stripcslashes($data["username"]));
@@ -137,7 +141,7 @@ function registrasi($data) {
 	// cek username sudah ada atau belum
 	$result = mysqli_query($conn, "SELECT username FROM user WHERE username = '$username'");
 
-	if( mysqli_fetch_assoc($result) ) {
+	if (mysqli_fetch_assoc($result)) {
 		echo "<script>
 				alert('username sudah terdaftar')
 			</script>";
@@ -145,7 +149,7 @@ function registrasi($data) {
 	}
 
 	// cek konfirmasi password
-	if( $password !== $password2) {
+	if ($password !== $password2) {
 		echo "<script>
 				alert('konfirmasi password tidak sesuai');
 			</script>";
@@ -160,8 +164,3 @@ function registrasi($data) {
 
 	return mysqli_affected_rows($conn);
 }
-
-
-
-
-?>
